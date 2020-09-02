@@ -37,8 +37,12 @@ jobs:
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
           
-      - name: install spring cloud extension
-        run: az extension add --source https://steeltoe.blob.core.windows.net/cli/spring_cloud-0.5.1-py2.py3-none-any.whl
+      # Azure CLI extension installation.
+      - uses: azure/CLI@v1
+        with:
+          azcliversion: 2.11.1
+          inlineScript: |
+            az extension add --source https://steeltoe.blob.core.windows.net/cli/spring_cloud-0.5.1-py2.py3-none-any.whl
       
       - name: Build and package planet-weather-provider app
         working-directory: ${{env.working-directory}}/src/planet-weather-provider
