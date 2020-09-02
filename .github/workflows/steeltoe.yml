@@ -33,16 +33,13 @@ jobs:
           dotnet-version: ${{ matrix.dotnet }}
           
       # Set credential for az login
-      - uses: azure/login@v1
+      - uses: azure/login@v1.1
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
-          
-      # Azure CLI extension installation.
-      - uses: azure/CLI@v1
-        with:
-          azcliversion: 2.11.1
-          inlineScript: |
-            az extension add --source https://steeltoe.blob.core.windows.net/cli/spring_cloud-0.5.1-py2.py3-none-any.whl
+
+      - name: install Azure CLI extension
+        run: |
+          az extension add --source https://steeltoe.blob.core.windows.net/cli/spring_cloud-0.5.1-py2.py3-none-any.whl
       
       - name: Build and package planet-weather-provider app
         working-directory: ${{env.working-directory}}/src/planet-weather-provider
