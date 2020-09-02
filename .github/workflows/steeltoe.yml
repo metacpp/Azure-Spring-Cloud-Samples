@@ -47,11 +47,11 @@ jobs:
         working-directory: ${{env.working-directory}}/src/planet-weather-provider
         run: |
           dotnet build
-          az spring-cloud app deploy -n planet-weather-provider --runtime-version NetCore_31 --main-entry Microsoft.Azure.SpringCloud.Sample.PlanetWeatherProvider.dll --artifact-path ./deploy.zip -s ${{ secrets.service-name }} -g ${{ secrets.resource-group-name }}
+          az spring-cloud app deploy -n planet-weather-provider --runtime-version NetCore_31 --main-entry Microsoft.Azure.SpringCloud.Sample.PlanetWeatherProvider.dll --artifact-path ./deploy.zip -s ${{ env.service-name }} -g ${{ env.resource-group-name }}
 
       - name: Build solar-system-weather app
         working-directory: ${{env.working-directory}}/src/solar-system-weather
         run: |
           dotnet build
-          az spring-cloud app deploy -n solar-system-weather --runtime-version NetCore_31 --main-entry Microsoft.Azure.SpringCloud.Sample.SolarSystemWeather.dll --artifact-path ./deploy.zip -s ${{ secrets.service-name }} -g ${{ secrets.resource-group-name }}
+          az spring-cloud app deploy -n solar-system-weather --runtime-version NetCore_31 --main-entry Microsoft.Azure.SpringCloud.Sample.SolarSystemWeather.dll --artifact-path ./deploy.zip -s ${{ env.service-name }} -g ${{ env.resource-group-name }}
         
