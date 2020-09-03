@@ -7,51 +7,52 @@ name: Steeltoe-CD
 on:
   push:
     branches: [ steeltoe ]
-
+    paths-ignore:
+      - '**/*.md'
+      - '**/*.gitignore'
+      - '**/*.gitattributes'
+env:
+  planet-service-root: ${{env.working-directory}}/steeltoe-sample/src/planet-weather-provider
+  solar-service-root: ${{env.working-directory}}/steeltoe-sample/src/solar-system-weather
+  resource-group-name: steeltoe-ci-test-rg
+  service-name: steeltoe-ci-test
+  netcore-version: '3.1.x'
+  extension-source: https://steeltoe.blob.core.windows.net/cli/spring_cloud-0.5.1-py2.py3-none-any.whl
+      
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "build"
   build:
-    # The type of runner that the job will run on
+    name: Build and Deploy
     runs-on: ubuntu-latest
-    env:
-      working-directory: ./steeltoe-sample
-      resource-group-name: steeltoe-ci-test-rg
-      service-name: steeltoe-ci-test
     
-    # Supported .NET Core version matrix.
-    strategy:
-      matrix:
-        dotnet: [ '3.1.x' ]
-
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
 
-      # Set up .NET Core 3.1 SDK
-      - uses: actions/setup-dotnet@v1
+      - name: Setup .NET Core SDK ${{ env.netcore-version }}
+        uses: actions/setup-dotnet@v1
         with:
-          dotnet-version: ${{ matrix.dotnet }}
+          dotnet-version: ${{ env.netcore-version }}
           
-      # Set credential for az login
-      - uses: azure/login@v1.1
+      - name: Login to Azure
+        uses: azure/login@v1.1
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - name: install Azure CLI extension
+      - name: install Azure CLI extension and set defaults
         run: |
-          az extension add --source https://steeltoe.blob.core.windows.net/cli/spring_cloud-0.5.1-py2.py3-none-any.whl --yes
+          az extension add --source ${{env.extension-source}} --y
+          az configure --defaults group=${{ env.resource-group-name }}
+          az configure --defaults spring-cloud=${{ env.service-name }}
       
-      - name: Build and package planet-weather-provider app
-        working-directory: ${{env.working-directory}}/src/planet-weather-provider
+      - name: Restore, Build, Publish and Deploy planet app
+        working-directory: ${{env.planet-service-root}}
         run: |
-          dotnet build
-          az spring-cloud app deploy -n planet-weather-provider --runtime-version NetCore_31 --main-entry Microsoft.Azure.SpringCloud.Sample.PlanetWeatherProvider.dll --artifact-path ./deploy.zip -s ${{ env.service-name }} -g ${{ env.resource-group-name }}
+          dotnet publish --configuration Release
+          az spring-cloud app deploy -n planet-weather-provider --runtime-version NetCore_31 --main-entry Microsoft.Azure.SpringCloud.Sample.PlanetWeatherProvider.dll --artifact-path ./publish-deploy-planet.zip
 
-      - name: Build solar-system-weather app
-        working-directory: ${{env.working-directory}}/src/solar-system-weather
+      - name: Restore, Build, Publish and Deploy solar app
+        working-directory: ${{env.solar-service-root}}
         run: |
-          dotnet build
-          az spring-cloud app deploy -n solar-system-weather --runtime-version NetCore_31 --main-entry Microsoft.Azure.SpringCloud.Sample.SolarSystemWeather.dll --artifact-path ./deploy.zip -s ${{ env.service-name }} -g ${{ env.resource-group-name }}
+          dotnet publish --configuration Release
+          az spring-cloud app deploy -n solar-system-weather --runtime-version NetCore_31 --main-entry Microsoft.Azure.SpringCloud.Sample.SolarSystemWeather.dll --artifact-path ./publish-deploy-solar.zip
         
