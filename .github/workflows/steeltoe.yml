@@ -12,8 +12,8 @@ on:
       - '**/*.gitignore'
       - '**/*.gitattributes'
 env:
-  planet-service-root: ${{env.working-directory}}/steeltoe-sample/src/planet-weather-provider
-  solar-service-root: ${{env.working-directory}}/steeltoe-sample/src/solar-system-weather
+  planet-service-root: ./steeltoe-sample/src/planet-weather-provider
+  solar-service-root: ./steeltoe-sample/src/solar-system-weather
   resource-group-name: steeltoe-ci-test-rg
   service-name: steeltoe-ci-test
   netcore-version: '3.1.x'
