@@ -10,7 +10,6 @@ pool:
   vmImage: 'ubuntu-latest'
 
 variables:
-  configuration: 'Release'
   workingDirectory: './steeltoe-sample/src'
 
 steps:
@@ -23,7 +22,7 @@ steps:
   inputs:
     command: 'publish'
     publishWebProjects: false
-    arguments: '--configuration $(configuration)'
+    arguments: '--configuration Release'
     zipAfterPublish: false
     modifyOutputPath: false
     workingDirectory: $(workingDirectory)
