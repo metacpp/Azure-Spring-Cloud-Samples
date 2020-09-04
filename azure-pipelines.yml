@@ -39,4 +39,4 @@ steps:
       az extension add --source ${{ variables.extensionSource }} --y
       az spring-cloud app deploy -n ${{ variables.planetAppName }} --runtime-version NetCore_31 --main-entry ${{ variables.planetMainEntry }} --artifact-path ./${{ variables.planetAppName }}/publish-deploy-planet.zip -s ${{ variables.serviceName }} -g ${{ variables.resourceGroupName }}
       az spring-cloud app deploy -n ${{ variables.solarAppName }} --runtime-version NetCore_31 --main-entry ${{ variables.solarMainEntry }} --artifact-path ./${{ variables.solarAppName }}/publish-deploy-solar.zip -s ${{ variables.serviceName }} -g ${{ variables.resourceGroupName }}
-    workingDirectory: '${{ workingDirectory }}/src'
+    workingDirectory: '${{ variables.workingDirectory }}/src'
