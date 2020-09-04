@@ -55,4 +55,6 @@ jobs:
         run: |
           dotnet publish --configuration Release
           az spring-cloud app deploy -n solar-system-weather --runtime-version NetCore_31 --main-entry Microsoft.Azure.SpringCloud.Sample.SolarSystemWeather.dll --artifact-path ./publish-deploy-solar.zip
+          az spring-cloud app update -n solar-system-weather --is-public true
+          az spring-cloud app show -n solar-system-weather -o table
         
