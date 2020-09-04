@@ -1,0 +1,29 @@
+# ASP.NET Core
+# Build and test ASP.NET Core projects targeting .NET Core.
+# Add steps that run tests, create a NuGet package, deploy, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
+
+trigger:
+- steeltoe
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  buildConfiguration: 'Release'
+
+steps:
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'publish'
+    publishWebProjects: false
+    arguments: '--configuration Release'
+    zipAfterPublish: false
+    modifyOutputPath: false
+    workingDirectory: './steeltoe-sample/src/planet-weather-provider'
+- task: AzureCLI@1
+  inputs:
+    azureSubscription: <your service connection name>
+    scriptLocation: inlineScript
+    inlineScript: |
+      az extension add --source https://steeltoe.blob.core.windows.net/cli/spring_cloud-0.5.1-py2.py3-none-any.whl --y
