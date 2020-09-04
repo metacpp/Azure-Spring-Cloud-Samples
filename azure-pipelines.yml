@@ -17,7 +17,7 @@ steps:
   inputs:
     azureSubscription: 'Java Tooling Tests with TTL = 7 Days(685ba005-af8d-4b04-8f16-a7bf38b2eb5a)'
     scriptLocation: 'inlineScript'
-    inlineScript: 'az extension add --source $extensionSource --y'
+    inlineScript: 'az extension add --source $[variables.extensionSource] --y'
 # Restore, build, publish and package the zipped planet app
 - task: DotNetCoreCLI@2
   inputs:
