@@ -10,19 +10,24 @@ pool:
   vmImage: 'ubuntu-latest'
 
 variables:
-  buildConfiguration: 'Release'
+  configuration: 'Release'
+  workingDirectory: './steeltoe-sample/src'
 
 steps:
-- task: DotNetCoreCLI@2
-  inputs:
-    command: 'publish'
-    publishWebProjects: false
-    arguments: '--configuration Release'
-    zipAfterPublish: false
-    modifyOutputPath: false
-    workingDirectory: './steeltoe-sample/src/planet-weather-provider'
 - task: AzureCLI@1
   inputs:
     azureSubscription: 'Java Tooling Tests with TTL = 7 Days(685ba005-af8d-4b04-8f16-a7bf38b2eb5a)'
     scriptLocation: 'inlineScript'
     inlineScript: 'az extension add --source https://steeltoe.blob.core.windows.net/cli/spring_cloud-0.5.1-py2.py3-none-any.whl --y'
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'publish'
+    publishWebProjects: false
+    arguments: '--configuration $(configuration)'
+    zipAfterPublish: false
+    modifyOutputPath: false
+    workingDirectory: $(workingDirectory)
+    projects: |
+      planet-weather-provider/Microsoft.Azure.SpringCloud.Sample.PlanetWeatherProvider.csproj
+      solar-system-weather/Microsoft.Azure.SpringCloud.Sample.SolarSystemWeather.csproj
+
