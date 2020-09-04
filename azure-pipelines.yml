@@ -27,6 +27,6 @@ steps:
     scriptLocation: 'inlineScript'
     inlineScript: |
       az extension add --source https://steeltoe.blob.core.windows.net/cli/spring_cloud-0.5.1-py2.py3-none-any.whl --y
-      az spring-cloud app deploy -n planet-weather-provider --runtime-version NetCore_31 --main-entry Microsoft.Azure.SpringCloud.Sample.PlanetWeatherProvider.dll --artifact-path ./planet-weather-provider/publish-deploy-planet.zip
-      az spring-cloud app deploy -n solar-system-weather --runtime-version NetCore_31 --main-entry Microsoft.Azure.SpringCloud.Sample.SolarSystemWeather.dll --artifact-path ./solar-weather-system/publish-deploy-solar.zip
+      az spring-cloud app deploy -n planet-weather-provider --runtime-version NetCore_31 --main-entry Microsoft.Azure.SpringCloud.Sample.PlanetWeatherProvider.dll --artifact-path ./planet-weather-provider/publish-deploy-planet.zip -s steeltoe-ci-test -g steltoe-ci-test-rg
+      az spring-cloud app deploy -n solar-system-weather --runtime-version NetCore_31 --main-entry Microsoft.Azure.SpringCloud.Sample.SolarSystemWeather.dll --artifact-path ./solar-weather-system/publish-deploy-solar.zip -s steeltoe-ci-test -g steltoe-ci-test-rg
     workingDirectory: './steeltoe-sample/src/'
