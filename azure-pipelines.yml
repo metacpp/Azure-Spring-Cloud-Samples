@@ -9,6 +9,16 @@ trigger:
 pool:
   vmImage: 'ubuntu-latest'
 
+variables:
+  extensionSource: 'https://steeltoe.blob.core.windows.net/cli/spring_cloud-0.5.1-py2.py3-none-any.whl'
+  workingDirectory: './steeltoe-sample'
+  planetMainEntry: 'Microsoft.Azure.SpringCloud.Sample.PlanetWeatherProvider.dll'
+  solarMainEntry: 'Microsoft.Azure.SpringCloud.Sample.SolarSystemWeather.dll'
+  planetAppName: 'planet-weather-provider'
+  solarAppName: 'solar-system-weather'
+  serviceName: 'steeltoe-ci-test'
+  resourceGroupName: 'steeltoe-ci-test-rg'
+
 steps:
 # Restore, build, publish and package the zipped planet app
 - task: DotNetCoreCLI@2
@@ -18,7 +28,7 @@ steps:
     arguments: '--configuration Release'
     zipAfterPublish: false
     modifyOutputPath: false
-    workingDirectory: './steeltoe-sample'
+    workingDirectory: $(workingDirectory)
 
 # Configure Azure CLI and install spring-cloud extesion
 - task: AzureCLI@1
@@ -26,7 +36,7 @@ steps:
     azureSubscription: 'Java Tooling Tests with TTL = 7 Days(685ba005-af8d-4b04-8f16-a7bf38b2eb5a)'
     scriptLocation: 'inlineScript'
     inlineScript: |
-      az extension add --source https://steeltoe.blob.core.windows.net/cli/spring_cloud-0.5.1-py2.py3-none-any.whl --y
-      az spring-cloud app deploy -n planet-weather-provider --runtime-version NetCore_31 --main-entry Microsoft.Azure.SpringCloud.Sample.PlanetWeatherProvider.dll --artifact-path ./planet-weather-provider/publish-deploy-planet.zip -s steeltoe-ci-test -g steeltoe-ci-test-rg
-      az spring-cloud app deploy -n solar-system-weather --runtime-version NetCore_31 --main-entry Microsoft.Azure.SpringCloud.Sample.SolarSystemWeather.dll --artifact-path ./solar-weather-system/publish-deploy-solar.zip -s steeltoe-ci-test -g steeltoe-ci-test-rg
-    workingDirectory: './steeltoe-sample/src/'
+      az extension add --source ${{ variables.extensionSource }} --y
+      az spring-cloud app deploy -n ${{ variables.planetAppName }} --runtime-version NetCore_31 --main-entry ${{ variables.planetMainEntry }} --artifact-path ./${{ variables.planetAppName }}/publish-deploy-planet.zip -s ${{ variables.serviceName }} -g ${{ variables.resourceGroupName }}
+      az spring-cloud app deploy -n ${{ variables.solarAppName }} --runtime-version NetCore_31 --main-entry ${{ variables.solarMainEntry }} --artifact-path ./${{ variables.solarAppName }}/publish-deploy-solar.zip -s ${{ variables.serviceName }} -g ${{ variables.resourceGroupName }}
+    workingDirectory: '${{ workingDirectory }}/src'
