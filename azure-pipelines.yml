@@ -9,15 +9,13 @@ trigger:
 pool:
   vmImage: 'ubuntu-latest'
 
-variables:
-  extensionSource: https://steeltoe.blob.core.windows.net/cli/spring_cloud-0.5.1-py2.py3-none-any.whl
 steps:
 # Configure Azure CLI and install spring-cloud extesion
 - task: AzureCLI@1
   inputs:
     azureSubscription: 'Java Tooling Tests with TTL = 7 Days(685ba005-af8d-4b04-8f16-a7bf38b2eb5a)'
     scriptLocation: 'inlineScript'
-    inlineScript: 'az extension add --source $[variables.extensionSource] --y'
+    inlineScript: 'az extension add --source https://steeltoe.blob.core.windows.net/cli/spring_cloud-0.5.1-py2.py3-none-any.whl --y'
 # Restore, build, publish and package the zipped planet app
 - task: DotNetCoreCLI@2
   inputs:
